@@ -13,6 +13,7 @@ class DetailsScreen extends StatefulWidget {
 }
 
 class _DetailsScreenState extends State<DetailsScreen> {
+  bool isRefunded = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,24 +86,27 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
-                    color: Colors.green.shade100,
+                    color: isRefunded ? Colors.black : Colors.green.shade100,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Successful',
+                        isRefunded
+                            ? 'Refunded'
+                            : widget.transaction.status ?? '',
                         style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.green),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: isRefunded ? Colors.white : Colors.green,
+                        ),
                       )
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 30),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               decoration: BoxDecoration(
@@ -112,6 +116,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
               child: Column(
                 children: [
                   TransactionEntry(
+                    text: 'Marchent',
+                    value: 'Netflix',
+                  ),
+                  SizedBox(height: 32),
+                  TransactionEntry(
+                    text: 'Payment method',
+                    value: widget.transaction.paymentMethod ?? '',
+                  ),
+                  SizedBox(height: 32),
+                  TransactionEntry(
                     text: 'Date',
                     value:
                         Helper.formatTransactionDate(widget.transaction.time),
@@ -119,7 +133,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   SizedBox(height: 32),
                   TransactionEntry(
                     text: 'Status',
-                    value: 'Success',
+                    value: widget.transaction.status ?? '',
                   ),
                   SizedBox(height: 32),
                   TransactionEntry(
@@ -129,6 +143,37 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 ],
               ),
             ),
+            ElevatedButton(
+              onPressed: isRefunded
+                  ? null
+                  : () {
+                      setState(() {
+                        isRefunded = true;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Transaction refunded!"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+              style: ButtonStyle(
+                  foregroundColor: WidgetStatePropertyAll(Colors.white),
+                  backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                      (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.disabled)) {
+                      return Colors.black.withValues(alpha: .5);
+                    }
+                    return Colors.black;
+                  }),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  )),
+              child: Text('Refund'),
+            ),
+            const SizedBox(height: 30),
           ],
         ),
       ),
