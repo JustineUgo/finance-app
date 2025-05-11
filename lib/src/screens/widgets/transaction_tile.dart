@@ -1,12 +1,14 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:finance/src/helper/helper.dart';
+import 'package:finance/src/models/transaction_response.dart';
 import 'package:flutter/material.dart';
 
 class TransactionTile extends StatelessWidget {
   const TransactionTile({
     super.key,
+    required this.transaction,
   });
-
+  final TransactionResponse transaction;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,8 +29,7 @@ class TransactionTile extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: CachedNetworkImage(
-              imageUrl:
-                  'https://cdn-images-1.medium.com/max/1200/1*ty4NvNrGg4ReETxqU2N3Og.png',
+              imageUrl: transaction.merchantLogo ?? '',
               fit: BoxFit.cover,
             ),
           ),
@@ -38,24 +39,24 @@ class TransactionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Netflix Premium',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600),
+                  transaction.name ?? '',
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Today 08:24 pm',
-                  style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w300),
+                  Helper.formatTransactionDate(
+                      transaction.time ?? DateTime.now()),
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w300),
                 ),
               ],
             ),
           ),
           Text(
-            '-\$17.99',
+            '-\$${transaction.amount ?? 0}',
             style: TextStyle(
               color: Color(0xFFff976b),
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           )
         ],
