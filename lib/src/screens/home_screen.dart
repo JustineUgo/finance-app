@@ -1,3 +1,4 @@
+import 'package:animation_list/animation_list.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:finance/src/bloc/bloc.dart';
 import 'package:finance/src/bloc/event.dart';
@@ -128,16 +129,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 10),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: Helper.filterTransactionsByMonth(
-                                    state.transactions, monthFilter)
-                                .map((transaction) =>
-                                    TransactionTile(transaction: transaction))
-                                .toList(),
-                          ),
+                          child: RefreshIndicator(
+                        onRefresh: () async {
+                          BlocProvider.of<TransactionBloc>(context)
+                              .add(GetTransactions());
+                        },
+                        child: AnimationList(
+                          animationDirection: AnimationDirection.vertical,
+                          duration: 1000,
+                          reBounceDepth: 2.0,
+                          children: Helper.filterTransactionsByMonth(
+                                  state.transactions, monthFilter)
+                              .map((transaction) =>
+                                  TransactionTile(transaction: transaction))
+                              .toList(),
                         ),
-                      ),
+                      )),
                       const SizedBox(height: 10),
                     ],
                   ),
