@@ -12,7 +12,7 @@ This project is a two-screen Flutter app that displays a transaction summary and
    ```bash
    git clone https://github.com/JustineUgo/finance-app.git
    cd finance-app
-````
+    ````
 
 2. **Install dependencies**:
 
